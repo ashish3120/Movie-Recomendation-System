@@ -1,10 +1,11 @@
 import streamlit as st
 import pickle
 import pandas as pd
-import numpy as np
 
 
-# custom loader to bypass numpy internal path issue
+# -------------------------
+# custom loader
+# -------------------------
 class CustomUnpickler(pickle.Unpickler):
     def find_class(self, module, name):
         if module == "numpy._core.numeric":
@@ -17,20 +18,33 @@ def load_pickle(file_path):
         return CustomUnpickler(f).load()
 
 
-# load files
-movies_dict = load_pickle("../model/movie_list.pkl")
-movies = pd.DataFrame(movies_dict)
+# -------------------------
+# CACHE LOADING (IMPORTANT)
+# -------------------------
+@st.cache_resource
+def load_data():
 
-similarity = load_pickle("../model/similarity.pkl")
+    movies_dict = load_pickle("../model/movie_list.pkl")
+    similarity = load_pickle("../model/similarity.pkl")
+
+    movies = pd.DataFrame(movies_dict)
+
+    return movies, similarity
 
 
-# recommendation function
+movies, similarity = load_data()
+
+
+# -------------------------
+# recommend function
+# -------------------------
 def recommend(movie):
+
     movie_index = movies[movies["title"] == movie].index[0]
 
     distances = similarity[movie_index]
 
-    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[
+    movies_list = sorted(list(enumerate(distances)), key=lambda x: x[1], reverse=True)[
         1:6
     ]
 
@@ -42,7 +56,9 @@ def recommend(movie):
     return recommended_movies
 
 
+# -------------------------
 # UI
+# -------------------------
 st.title("Movie Recommender System")
 
 selected_movie_name = st.selectbox("Select a movie", movies["title"].values)
