@@ -1,11 +1,18 @@
 services:
+  # 1. Backend API (FastAPI)
   - type: web
-    name: movie-recommender
+    name: movie-recommender-api
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: cd app && streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    startCommand: uvicorn app.api:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: GIT_LFS_ENABLED
         value: true
       - key: PYTHON_VERSION
         value: 3.14.3
+  
+  # 2. Frontend (Static Site)
+  - type: static
+    name: movie-recommender-frontend
+    publishDir: frontend
+    buildCommand: "" # No build needed for vanilla HTML/CSS/JS

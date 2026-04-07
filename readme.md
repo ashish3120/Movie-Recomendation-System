@@ -47,11 +47,11 @@ A content-based movie recommendation engine that suggests similar movies based o
 | -------------- | ---------------------------------------------------- |
 | Language       | Python 3.14+                                         |
 | ML / NLP       | Scikit-learn, NLTK (Porter Stemmer), Pandas, NumPy   |
+| Backend API    | FastAPI, Uvicorn                                     |
+| Web UI         | HTML5, CSS3 (Modern Vanilla), JavaScript (ES6+)      |
 | Vectorization  | `CountVectorizer` (Bag of Words)                     |
 | Similarity     | Cosine Similarity (`sklearn.metrics.pairwise`)       |
-| Web Framework  | Streamlit                                            |
-| Serialization  | Pickle (with Git LFS for large files)                |
-| Deployment     | Render (Web Service)                                 |
+| Deployment     | Render (Web Service + Static Site)                   |
 
 ---
 
@@ -166,11 +166,11 @@ git push origin main
 
 | Setting         | Value                                              |
 | --------------- | -------------------------------------------------- |
-| **Name**        | `movie-recommender`                                |
+| **Name**        | `movie-recommender-api`                             |
 | **Runtime**     | `Python`                                           |
 | **Build Command** | `pip install -r requirements.txt`                |
-| **Start Command** | `cd app && streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true` |
-| **Plan**        | Free (or Starter for better performance)           |
+| **Start Command** | `uvicorn app.api:app --host 0.0.0.0 --port $PORT` |
+| **Plan**        | Free                                               |
 
 5. Click **"Create Web Service"**.
 
@@ -205,16 +205,23 @@ The `render.yaml` file auto-configures everything when you connect the repo to R
 
 ```yaml
 services:
+  # 1. Backend API (FastAPI)
   - type: web
-    name: movie-recommender
+    name: movie-recommender-api
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: cd app && streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    startCommand: uvicorn app.api:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: GIT_LFS_ENABLED
         value: true
       - key: PYTHON_VERSION
         value: 3.14.3
+  
+  # 2. Frontend (Static Site)
+  - type: static
+    name: movie-recommender-frontend
+    publishDir: frontend
+    buildCommand: ""
 ```
 
 ---
