@@ -1,25 +1,31 @@
 import streamlit as st
 import pickle
 import pandas as pd
-import requests
+import numpy as np
 
 
-def fetch_poster(movie_id):
-    url = "https://api.themoviedb.org/3/movie/{}?api_key=YOUR_API_KEY&language=en-US".format(
-        movie_id
-    )
-    data = requests.get(url)
-    data = data.json()
-
-    poster_path = data["poster_path"]
-
-    full_path = "https://image.tmdb.org/t/p/w500/" + poster_path
-
-    return full_path
+# custom loader to bypass numpy internal path issue
+class CustomUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        if module == "numpy._core.numeric":
+            module = "numpy.core.numeric"
+        return super().find_class(module, name)
 
 
+def load_pickle(file_path):
+    with open(file_path, "rb") as f:
+        return CustomUnpickler(f).load()
+
+
+# load files
+movies_dict = load_pickle("../model/movie_list.pkl")
+movies = pd.DataFrame(movies_dict)
+
+similarity = load_pickle("../model/similarity.pkl")
+
+
+# recommendation function
 def recommend(movie):
-
     movie_index = movies[movies["title"] == movie].index[0]
 
     distances = similarity[movie_index]
@@ -29,56 +35,20 @@ def recommend(movie):
     ]
 
     recommended_movies = []
-    recommended_movies_posters = []
 
     for i in movies_list:
-        movie_id = movies.iloc[i[0]].movie_id
-
         recommended_movies.append(movies.iloc[i[0]].title)
 
-        recommended_movies_posters.append(fetch_poster(movie_id))
-
-    return recommended_movies, recommended_movies_posters
+    return recommended_movies
 
 
-st.header("Movie Recommender System")
+# UI
+st.title("Movie Recommender System")
 
+selected_movie_name = st.selectbox("Select a movie", movies["title"].values)
 
-movies_dict = pickle.load(open("model/movie_list.pkl", "rb"))
+if st.button("Recommend"):
+    recommendations = recommend(selected_movie_name)
 
-movies = pd.DataFrame(movies_dict)
-
-
-similarity = pickle.load(open("model/similarity.pkl", "rb"))
-
-
-movie_list = movies["title"].values
-
-
-selected_movie = st.selectbox("Type or select a movie", movie_list)
-
-
-if st.button("Show Recommendation"):
-    recommended_movies, recommended_movies_posters = recommend(selected_movie)
-
-    col1, col2, col3, col4, col5 = st.columns(5)
-
-    with col1:
-        st.text(recommended_movies[0])
-        st.image(recommended_movies_posters[0])
-
-    with col2:
-        st.text(recommended_movies[1])
-        st.image(recommended_movies_posters[1])
-
-    with col3:
-        st.text(recommended_movies[2])
-        st.image(recommended_movies_posters[2])
-
-    with col4:
-        st.text(recommended_movies[3])
-        st.image(recommended_movies_posters[3])
-
-    with col5:
-        st.text(recommended_movies[4])
-        st.image(recommended_movies_posters[4])
+    for movie in recommendations:
+        st.write(movie)
