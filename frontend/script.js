@@ -1,5 +1,5 @@
 // REPLACE THIS WITH YOUR RENDER API URL ONCE DEPLOYED
-const API_BASE_URL = "https://movie-recomendation-system-api.onrender.com"; // Default placeholder
+const API_BASE_URL = "https://movie-recomendation-system-api.onrender.com";
 
 let allMovies = [];
 

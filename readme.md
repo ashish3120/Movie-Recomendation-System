@@ -83,146 +83,26 @@ Movie-Recomendation-System/
 
 ---
 
-## 🚀 Getting Started
+# 🚀 Deployment Guides
 
-### Prerequisites
+## 1. Backend (Render)
+- Deploy your repo to Render as a **Web Service**.
+- Set the **Start Command** to `uvicorn app.api:app --host 0.0.0.0 --port $PORT`.
+- Set Environment Variable `GIT_LFS_ENABLED = true`.
+- Set Environment Variable `PYTHON_VERSION = 3.14.3`.
 
-- Python **3.14** or higher
-- pip (Python package manager)
-- Git LFS (for pulling large `.pkl` model files)
+## 2. Frontend (Vercel) — ✨ Recommended
+Vercel is the fastest and easiest way to host your modern CSS/JS frontend.
 
-### Installation
+1. Go to [https://vercel.com](https://vercel.com) and sign in with GitHub.
+2. Click **"Add New"** → **"Project"**.
+3. Import your `Movie-Recomendation-System` repository.
+4. In **Project Settings**:
+    - **Root Directory**: Select `frontend`.
+    - **Build Settings**: Since it's vanilla HTML/CSS/JS, leave them at defaults.
+5. Click **"Deploy"**.
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/ashish3120/Movie-Recomendation-System.git
-cd Movie-Recomendation-System
-
-# 2. (Required) Pull Git LFS files
-git lfs install
-git lfs pull
-
-# 3. Create a virtual environment (recommended)
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# macOS / Linux
-source venv/bin/activate
-
-# 4. Install dependencies
-pip install -r requirements.txt
-
-# 5. Download NLTK data (one-time)
-python -c "import nltk; nltk.download('punkt')"
-```
-
-### Run the App
-
-```bash
-cd app
-streamlit run app.py
-```
-
-The app will open at **http://localhost:8501** in your browser.
-
-### Re-train the Model (Optional)
-
-If you want to re-train or modify the model:
-
-```bash
-cd notebook
-jupyter notebook recommender.ipynb
-```
-
-Run all cells — this will regenerate `model/movie_list.pkl` and `model/similarity.pkl`.
-
----
-
-## 🌐 Deploying on Render
-
-> See the detailed deployment guide below.
-
-### Step 1 — Push All Files to GitHub
-
-Make sure your repository includes:
-- `requirements.txt` (created in this repo)
-- `render.yaml` (created in this repo)
-- Model files tracked via **Git LFS**
-
-```bash
-git add .
-git commit -m "Add deployment files"
-git push origin main
-```
-
-### Step 2 — Create a Render Web Service
-
-1. Go to [https://render.com](https://render.com) and sign in with GitHub.
-2. Click **"New +"** → **"Web Service"**.
-3. Connect your **Movie-Recomendation-System** GitHub repository.
-4. Configure the service:
-
-| Setting         | Value                                              |
-| --------------- | -------------------------------------------------- |
-| **Name**        | `movie-recommender-api`                             |
-| **Runtime**     | `Python`                                           |
-| **Build Command** | `pip install -r requirements.txt`                |
-| **Start Command** | `uvicorn app.api:app --host 0.0.0.0 --port $PORT` |
-| **Plan**        | Free                                               |
-
-5. Click **"Create Web Service"**.
-
-### Step 3 — Enable Git LFS on Render
-
-Since `similarity.pkl` is tracked by Git LFS (~208 MB), Render needs to pull LFS files during the build. Add this **environment variable** in your Render dashboard:
-
-| Key                  | Value  |
-| -------------------- | ------ |
-| `GIT_LFS_ENABLED`   | `true` |
-
-> ⚠️ **Important**: Render's free tier has limited disk and memory. The similarity matrix is ~208 MB. If you hit memory limits, consider upgrading to the **Starter plan ($7/month)** which provides 512 MB RAM and 1 GB disk.
-
-### Step 4 — Fix the Model Path for Deployment
-
-The current `app.py` uses relative paths (`../model/...`). For Render, the working directory might differ. The `render.yaml` included in this repo handles this via the `cd app &&` prefix in the start command which ensures the correct relative path resolution.
-
-### Step 5 — Verify
-
-Once deployed, Render will provide a URL like:
-```
-https://movie-recommender-xxxx.onrender.com
-```
-
-Visit the URL to verify your app is live!
-
----
-
-## ⚙️ Render Configuration (render.yaml)
-
-The `render.yaml` file auto-configures everything when you connect the repo to Render:
-
-```yaml
-services:
-  # 1. Backend API (FastAPI)
-  - type: web
-    name: movie-recommender-api
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.api:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: GIT_LFS_ENABLED
-        value: true
-      - key: PYTHON_VERSION
-        value: 3.14.3
-  
-  # 2. Frontend (Static Site)
-  - type: static
-    name: movie-recommender-frontend
-    publishDir: frontend
-    buildCommand: ""
-```
+Once deployed, copy your Vercel URL and add it to your portfolio!
 
 ---
 
