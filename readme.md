@@ -45,7 +45,7 @@ A content-based movie recommendation engine that suggests similar movies based o
 
 | Layer          | Technology                                           |
 | -------------- | ---------------------------------------------------- |
-| Language       | Python 3.10+                                         |
+| Language       | Python 3.14+                                         |
 | ML / NLP       | Scikit-learn, NLTK (Porter Stemmer), Pandas, NumPy   |
 | Vectorization  | `CountVectorizer` (Bag of Words)                     |
 | Similarity     | Cosine Similarity (`sklearn.metrics.pairwise`)       |
@@ -87,7 +87,7 @@ Movie-Recomendation-System/
 
 ### Prerequisites
 
-- Python **3.10** or higher
+- Python **3.14** or higher
 - pip (Python package manager)
 - Git LFS (for pulling large `.pkl` model files)
 
@@ -214,7 +214,7 @@ services:
       - key: GIT_LFS_ENABLED
         value: true
       - key: PYTHON_VERSION
-        value: 3.10.12
+        value: 3.14.3
 ```
 
 ---
