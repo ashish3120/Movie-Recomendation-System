@@ -2,7 +2,7 @@
 
 A content-based movie recommendation engine that suggests similar movies based on metadata like genres, keywords, cast, crew, and overview. Built with **Python**, **Scikit-learn**, and **Streamlit**.
 
-> **Live Demo** — _Coming soon (deploying on Render)_
+> **Live Demo** — [Hugging Face Space](https://huggingface.co/spaces/ashish3120/Movie-Recomendation)
 
 ---
 
@@ -47,11 +47,11 @@ A content-based movie recommendation engine that suggests similar movies based o
 | -------------- | ---------------------------------------------------- |
 | Language       | Python 3.14+                                         |
 | ML / NLP       | Scikit-learn, NLTK (Porter Stemmer), Pandas, NumPy   |
-| Backend API    | FastAPI, Uvicorn                                     |
-| Web UI         | HTML5, CSS3 (Modern Vanilla), JavaScript (ES6+)      |
+| Web UI         | Streamlit                                            |
 | Vectorization  | `CountVectorizer` (Bag of Words)                     |
 | Similarity     | Cosine Similarity (`sklearn.metrics.pairwise`)       |
-| Deployment     | Render (Web Service + Static Site)                   |
+| Deployment     | Hugging Face Spaces                                  |
+| Model Hosting  | Hugging Face Datasets (for .pkl files > 200MB)       |
 
 ---
 
@@ -68,8 +68,8 @@ Movie-Recomendation-System/
 │   └── tmdb_5000_credits.csv   # Cast and crew data
 │
 ├── model/
-│   ├── movie_list.pkl          # Serialized DataFrame with movie_id, title, tags
-│   └── similarity.pkl          # Precomputed cosine similarity matrix (~208 MB, Git LFS)
+│   ├── movie_list.pkl          # Serialized DataFrame (hosted on HF Datasets)
+│   └── similarity.pkl          # Precomputed similarity matrix (~200 MB, hosted on HF Datasets)
 │
 ├── notebook/
 │   └── recommender.ipynb       # Jupyter notebook — full ML pipeline (EDA → Model)
@@ -77,32 +77,19 @@ Movie-Recomendation-System/
 ├── .gitattributes              # Git LFS tracking for .pkl files
 ├── .gitignore                  # Git ignore rules
 ├── requirements.txt            # Python dependencies
-├── render.yaml                 # Render deployment configuration
 └── readme.md                   # Project documentation (this file)
 ```
 
 ---
 
-# 🚀 Deployment Guides
+## 🚀 Deployment
 
-## 1. Backend (Render)
-- Deploy your repo to Render as a **Web Service**.
-- Set the **Start Command** to `uvicorn app.api:app --host 0.0.0.0 --port $PORT`.
-- Set Environment Variable `GIT_LFS_ENABLED = true`.
-- Set Environment Variable `PYTHON_VERSION = 3.14.3`.
+The application is deployed on **Hugging Face Spaces** using **Streamlit**. 
 
-## 2. Frontend (Vercel) — ✨ Recommended
-Vercel is the fastest and easiest way to host your modern CSS/JS frontend.
+Due to the size of the precomputed similarity matrix (~200 MB), the `.pkl` files are hosted on **Hugging Face Datasets** and are dynamically downloaded when the application starts.
 
-1. Go to [https://vercel.com](https://vercel.com) and sign in with GitHub.
-2. Click **"Add New"** → **"Project"**.
-3. Import your `Movie-Recomendation-System` repository.
-4. In **Project Settings**:
-    - **Root Directory**: Select `frontend`.
-    - **Build Settings**: Since it's vanilla HTML/CSS/JS, leave them at defaults.
-5. Click **"Deploy"**.
-
-Once deployed, copy your Vercel URL and add it to your portfolio!
+- **Space**: [ashish3120/Movie-Recomendation](https://huggingface.co/spaces/ashish3120/Movie-Recomendation)
+- **Dataset**: [ashish3120/movies](https://huggingface.co/datasets/ashish3120/movies)
 
 ---
 
@@ -138,6 +125,7 @@ This project is open source and available under the [MIT License](LICENSE).
 - [TMDB 5000 Movie Dataset](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata) — Kaggle
 - [Streamlit](https://streamlit.io/) — Web framework for ML apps
 - [Scikit-learn](https://scikit-learn.org/) — ML library
+- [Hugging Face](https://huggingface.co/) — For hosting the app and datasets
 
 ---
 
